@@ -1,0 +1,21 @@
+{
+  "name": "juliandres/phputils",
+  "description": "useful functions for PHP development",
+  "type": "library",
+  "require": {
+    "ext-json": "*",
+    "ext-mbstring": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Juliandres\\PhpUtils\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Juliandresval",
+      "email": "juanval1986@gmail.com"
+    }
+  ],
+  "minimum-stability": "stable"
+}
