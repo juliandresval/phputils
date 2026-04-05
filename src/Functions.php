@@ -1,6 +1,6 @@
 <?php
 
-namespace Juliandres\PhpUtils;
+namespace Juliandresval\PhpUtils;
 
 use ArrayObject;
 use DateTime;
