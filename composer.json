@@ -1,6 +1,6 @@
 {
-  "name": "juliandres/phputils",
-  "description": "useful functions for PHP development",
+  "name": "juliandresval/phputils",
+  "description": "Useful functions for PHP development",
   "type": "library",
   "require": {
     "ext-json": "*",
