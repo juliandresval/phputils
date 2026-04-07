@@ -11,8 +11,7 @@ class Functions
     public static function isCli(): bool
     {
         return (
-            php_sapi_name() === 'cli'
-            || !isset($_SERVER['HTTP_HOST'])
+            !isset($_SERVER['HTTP_HOST'])
             || !isset($_SERVER['REMOTE_ADDR'])
             || !isset($_SERVER['SERVER_ADDR'])
         );
@@ -48,7 +47,7 @@ class Functions
 
     public static function echo_json($var = '', $exit = false)
     {
-        echo_var(json_encode($var, JSON_PRETTY_PRINT), $exit);
+        self::echo_var(json_encode($var, JSON_PRETTY_PRINT), $exit);
     }
 
     public static function error_to_array(Throwable $error): array
@@ -67,7 +66,7 @@ class Functions
 
     public static function error_to_string(Throwable $error): string
     {
-        $error = error_to_array($error);
+        $error = self::error_to_array($error);
         return <<<TXT
   class: {$error['class']}
   location: {$error['location']}
@@ -119,14 +118,14 @@ class Functions
                     $var,
                     'SELECT * FROM elemento_configuracionpersonal WHERE (asignado = ?) AND (borrado = 0)'
                 ) !== false) {
-                $var = PHP_EOL . get_trace_string() . PHP_EOL . $var;
+                $var = PHP_EOL . self::get_trace_string() . PHP_EOL . $var;
                 $filename = __DIR__ . '/../logs/configuracionpersonal_' . date('Y-m-d') . '.log';
             }
         }
 
         //$filename = (!empty($_SERVER['DOCUMENT_ROOT']) ? $_SERVER['DOCUMENT_ROOT'] : getcwd()) . DIRECTORY_SEPARATOR .  $filename;
 
-        $data = (is_array($var) || is_object($var) || is_bool($var) || is_null($var)) ? convert_to_json(
+        $data = (is_array($var) || is_object($var) || is_bool($var) || is_null($var)) ? self::convert_to_json(
             self::check_var($var),
             JSON_PRETTY_PRINT | JSON_FORCE_OBJECT
         ) : $var;
@@ -163,7 +162,7 @@ class Functions
         $filename = (!empty($_SERVER['DOCUMENT_ROOT']) ? $_SERVER['DOCUMENT_ROOT'] : getcwd(
             )) . DIRECTORY_SEPARATOR . $filename;
 
-        $print = print_r(check_var($var), true);
+        $print = print_r(self::check_var($var), true);
 
         if ($rewrite) {
             $writed = file_put_contents($filename, $print . PHP_EOL . str_repeat('-', 80) . PHP_EOL);
@@ -702,7 +701,7 @@ class Functions
 
     public static function min_to_time($num)
     {
-        return hours_to_time($num / 60);
+        return self::hours_to_time($num / 60);
     }
 
     public static function shorten_string($string, $max = 80)
@@ -716,7 +715,7 @@ class Functions
 
     public static function flatten_string($string)
     {
-        return shorten_string($string, -1);
+        return self::shorten_string($string, -1);
     }
 
     public static function clean_html($html)
@@ -735,6 +734,11 @@ class Functions
         } else {
             return false;
         }
+    }
+
+    public static function convert_to_json($value, $options = 0, $depth = 512)
+    {
+        return empty($json_string = json_encode($value, $options = 0, $depth = 512)) ? json_last_error_msg() : $json_string;
     }
 
     public static function convert_from_json($var)
@@ -771,7 +775,7 @@ class Functions
         $tabla = "<table {$table_attributes} width='100%'><tbody>";
         foreach ($array as $key => $value) {
             if (is_array($value)) {
-                $value = array_to_table_list($value, $table_attributes);
+                $value = self::array_to_table_list($value, $table_attributes);
             }
             $tabla .= "<tr><td width='30%'>{$key}</td><td>{$value}</td></tr>";
         }
@@ -798,7 +802,7 @@ class Functions
     public static function get_trace_string($num_lines = 0, $offset = 2)
     {
         $trace = "";
-        foreach (get_trace($num_lines, $offset) as $key => $point) {
+        foreach (self::get_trace($num_lines, $offset) as $key => $point) {
             $trace .= (empty($trace) ? $trace : "\n") . "$key | $point";
         }
         return $trace;
@@ -938,7 +942,7 @@ class Functions
                 );
                 switch ($type) {
                     case 'dir':
-                        $tree[$i]['items'] = getDirectoryTree($path);
+                        $tree[$i]['items'] = self::getDirectoryTree($path);
                         break;
                     default:
                         break;
@@ -955,7 +959,7 @@ class Functions
         foreach ($tree as $i => $element) {
             $path = ($relative ? '' : $directory) . DIRECTORY_SEPARATOR . $element['name'];
             if ($element['type'] == 'dir') {
-                $flattened = array_merge($flattened, flattenDirectoryTree($path, $element['items']));
+                $flattened = array_merge($flattened, self::flattenDirectoryTree($path, $element['items']));
             } else {
                 $flattened[] = $path;
             }

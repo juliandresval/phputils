@@ -19,13 +19,16 @@ class PhpUtils
         return !self::isCli();
     }
 
-    public static function print(mixed $value): void
+    public static function print(mixed $value, bool $exit = false): void
     {
         $stringValue = \print_r(self::processValue($value), true);
         if (self::isCli()) {
             echo $stringValue . PHP_EOL;
         } else {
             echo "<pre style='text-align: initial; border-radius: 4px; border: 1px #0c2b45 solid; padding: 4px'>" . \htmlentities($stringValue) . "</pre>" . PHP_EOL;
+        }
+        if ($exit) {
+            exit();
         }
     }
 
